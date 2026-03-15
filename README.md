@@ -1,35 +1,17 @@
 # Pollen Information System – Garching
 
-A CPEE-driven web application that displays real-time pollen levels in Garching, detailed tree species information, and local plant observation photos. Users interact with the system through QR codes displayed on screen; scanning a QR code advances the CPEE workflow to the next page.
+This a a CPEE-driven web application that displays real-time pollen levels in Garching, detailed tree species information, and local plant observation photos. Users interact with the system through QR codes displayed on a tv screen. By scanning QR codes, users continue with the next page on CPEE workflow.
 
 ---
 
 
 ## System Overview
 
-### CPEE Workflow
-
-```
-pollen.html  ──── user scans a pollen QR code ────▶  send.php
-    │                                                     │
-    │              (PUT scientific name to CPEE callback) │
-    │◀────────────────────────────────────────────────────┘
-    │
-    ├──▶ trees.html        (shows species info for the scanned pollen type)
-    │        │
-    │        ├── "Go Home" QR      → send.php → CPEE → pollen.html
-    │        └── "See More Photos" QR → send.php → CPEE → observation.html
-    │
-    └──▶ observation.html  (shows recent Munich photos of the scanned plant)
-             │
-             └── "Scan to continue" QR → send.php → CPEE → pollen.html
-```
-
 ### Prepare and Finalize
 
 Each CPEE node has two data-handling sections:
 
-- **Prepare** — runs *before* the node executes. Used to set up endpoints or pass data into the node. For example, `endpoints.frames_display += attributes.framesid` registers which browser frame this node should display its page in.
+- **Prepare** — runs *before* the node executes. It is used to set up endpoints or pass data into the node. For example, `endpoints.frames_display += attributes.framesid` registers which browser frame this node should display its page in.
 - **Finalize** — runs *after* the node receives a result (e.g. a QR code scan). The result returned by `send.php` is captured into an Access Variable and then stored in a CPEE data field so it can be used by later nodes.
 
 ### CPEE Node Screenshots
