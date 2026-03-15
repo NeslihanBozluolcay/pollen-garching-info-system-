@@ -56,9 +56,9 @@ https://.../send.php?info=<value>&cb=<CPEE_callback_URL>
 
 | File | URL Parameter | Purpose |
 |------|--------------|---------|
-| `pollen.html` | — | Main dashboard. Fetches live pollen data via `pollen_proxy.php`, which web-scrapes Donnerwetter.de in real time. Displays a card per active pollen type (level > 0) with emoji, category badge, level pill, and a QR code. Adapts to 1 or 2 columns depending on item count. |
-| `trees.html` | `?species=<name>` | Species detail page. Receives a pollen/tree name, queries the Trefle API via `tree.php`, and displays a photo, scientific name, family, genus, author, year, status, and bibliography. Always shows two QR codes: Go Home and See More Photos. |
-| `observation.html` | `?taxon=<scientific_name>` | Photo gallery page. Takes a scientific genus name (e.g. `Salix`), fetches the 10 most recent research-grade observations from iNaturalist filtered to Munich (falls back to Germany if fewer than 4 Munich results), and displays them in a 5×2 photo grid. |
+| `pollen.html` | — |This is the main dashboard. It fetches live pollen data via `pollen_proxy.php`, which web-scrapes Donnerwetter.de in real time. Then, it displays a card per pollen type (level > 0) with its QR code. Adapts to 1 or 2 columns depending on item count. |
+| `trees.html` | `?species=<name>` | It's a species detail page. It receives a pollen/tree name (based on the scanned qr code in pollen.html), queries the Trefle API via `tree.php`, and displays an information page. Always shows two QR codes: Go Home and See More Photos. |
+| `observation.html` | `?taxon=<scientific_name>` | This is the photo gallery page. It takes a scientific genus name (e.g. `Salix`), fetches the 10 most recent research-grade observations from iNaturalist filtered to Munich (falls back to Germany if fewer than 4 Munich results), and displays them in a 5×2 photo grid. |
 
 ### PHP Backend Scripts
 
