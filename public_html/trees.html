@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title id="pageTitle">Tree Info</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #e8f5e9 0%, #f9fbe7 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 32px 20px 48px;
+  }
+
+  /* ── Error ── */
+  #error {
+    color: #c62828;
+    font-weight: 600;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  /* ── Main card ── */
+  #mainContent {
+    display: flex;
+    gap: 28px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+    background: #ffffff;
+    padding: 28px;
+    border-radius: 20px;
+    box-shadow: 0 6px 28px rgba(0,0,0,0.10);
+    max-width: 860px;
+    width: 100%;
+  }
+
+  #treeImage {
+    width: 240px;
+    height: 240px;
+    border-radius: 14px;
+    border: 3px solid #a5d6a7;
+    object-fit: cover;
+    flex-shrink: 0;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.10);
+  }
+
+  #treeDetails {
+    flex: 1;
+    min-width: 220px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 12px;
+  }
+
+  #treeDetails h2 {
+    font-size: 2em;
+    font-weight: 700;
+    color: #1b5e20;
+    line-height: 1.2;
+  }
+
+  #treeInfo p {
+    margin: 5px 0;
+    font-size: 0.95em;
+    color: #444;
+    line-height: 1.5;
+  }
+
+  #treeInfo strong {
+    color: #2e7d32;
+  }
+
+  /* ── QR section ── */
+  #qrContainer {
+    display: flex;
+    gap: 28px;
+    margin-top: 28px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .qr-block {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #ffffff;
+    padding: 18px 24px;
+    border-radius: 16px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.09);
+    gap: 10px;
+    min-width: 160px;
+  }
+
+  .qr-label {
+    font-weight: 700;
+    font-size: 0.95em;
+    text-align: center;
+    color: #1b5e20;
+  }
+
+  .qr-hint {
+    font-size: 0.72em;
+    color: #aaa;
+    text-align: center;
+  }
+
+  @media (max-width: 600px) {
+    #mainContent { flex-direction: column; align-items: center; }
+    #treeImage { width: 180px; height: 180px; }
+    #treeDetails { text-align: center; }
+  }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+
+<div id="error"></div>
+
+<div id="mainContent">
+  <img id="treeImage" alt="Tree Image">
+  <div id="treeDetails">
+    <h2 id="treeName">Tree Name</h2>
+    <div id="treeInfo"></div>
+  </div>
+</div>
+
+<div id="qrContainer">
+  <div class="qr-block">
+    <div class="qr-label">Go Home</div>
+    <div id="qrCode1"></div>
+    <div class="qr-hint">Scan to return</div>
+  </div>
+  <div class="qr-block">
+    <div class="qr-label">See More Photos</div>
+    <div id="qrCode2"></div>
+    <div class="qr-hint">Scan to browse</div>
+  </div>
+</div>
+
+<script>
+function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+}
+
+const speciesName = getQueryParam("species");
+
+if (!speciesName) {
+    document.getElementById("error").textContent = "No species specified in URL.";
+} else {
+    fetch(`tree.php?species=${encodeURIComponent(speciesName)}`)
+        .then(res => res.json())
+        .then(data => {
+            if (!data || !data.data || data.data.length === 0) {
+                document.getElementById("error").textContent = "No information found for this species.";
+                return;
+            }
+
+            const tree = data.data[0];
+            const treeDisplayName = tree.common_name || tree.scientific_name || speciesName;
+            document.getElementById("treeName").textContent = treeDisplayName;
+            document.title = treeDisplayName;
+            document.getElementById("treeImage").src = tree.image_url || "";
+
+            document.getElementById("treeInfo").innerHTML = `
+                <p><strong>Scientific Name:</strong> ${tree.scientific_name || "N/A"}</p>
+                <p><strong>Family:</strong> ${tree.family_common_name || "N/A"}</p>
+                <p><strong>Genus:</strong> ${tree.genus || "N/A"}</p>
+                <p><strong>Author:</strong> ${tree.author || "N/A"}</p>
+                <p><strong>Year:</strong> ${tree.year || "N/A"}</p>
+                <p><strong>Status:</strong> ${tree.status || "N/A"}</p>
+                <p><strong>Bibliography:</strong> ${tree.bibliography || "N/A"}</p>
+            `;
+        })
+        .catch(err => {
+            console.error(err);
+            document.getElementById("error").textContent = "Failed to fetch tree data.";
+        });
+}
+
+// QR codes always render regardless of tree data
+new QRCode(document.getElementById("qrCode1"), {
+    text: `https://lehre.bpm.in.tum.de/~ge32puf/send.php?info=home&cb=${encodeURIComponent(window.name)}`,
+    width: 120,
+    height: 120,
+    colorDark: "#1b5e20",
+    colorLight: "#ffffff",
+    correctLevel: QRCode.CorrectLevel.L
+});
+
+new QRCode(document.getElementById("qrCode2"), {
+    text: `https://lehre.bpm.in.tum.de/~ge32puf/send.php?info=photos&cb=${encodeURIComponent(window.name)}`,
+    width: 120,
+    height: 120,
+    colorDark: "#1b5e20",
+    colorLight: "#ffffff",
+    correctLevel: QRCode.CorrectLevel.L
+});
+</script>
+
+</body>
+</html>

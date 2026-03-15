@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Plant Observations – iNaturalist</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    font-family: 'Inter', Arial, sans-serif;
+    background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px 16px 16px;
+  }
+
+  /* ── Header ── */
+  .header {
+    text-align: center;
+    margin-bottom: 12px;
+    flex-shrink: 0;
+  }
+
+  .header h1 {
+    font-size: 1.9em;
+    font-weight: 700;
+    color: #1a237e;
+    letter-spacing: -0.5px;
+  }
+
+  .header p {
+    color: #7986cb;
+    font-size: 0.95em;
+    margin-top: 5px;
+  }
+
+  /* ── Photo grid ── */
+  #photos {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: repeat(2, 1fr);
+    gap: 8px;
+    width: 100%;
+    flex: 1;
+    min-height: 0;
+    margin-bottom: 12px;
+  }
+
+  .photo-card {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    background: #cfd8dc;
+    min-height: 0;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .photo-card:hover {
+    transform: scale(1.03);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.18);
+  }
+
+  .photo-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* ── Error ── */
+  #error {
+    color: #c62828;
+    font-weight: 600;
+    margin-bottom: 16px;
+    text-align: center;
+  }
+
+  /* ── QR block ── */
+  #qrBlock {
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #ffffff;
+    padding: 18px 28px;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    gap: 10px;
+  }
+
+  .qr-label {
+    font-weight: 700;
+    font-size: 1em;
+    color: #1a237e;
+    text-align: center;
+  }
+
+  .qr-hint {
+    font-size: 0.78em;
+    color: #9e9e9e;
+    text-align: center;
+  }
+
+  @media (max-width: 540px) {
+    #photos { grid-template-columns: repeat(2, 1fr); }
+    .header h1 { font-size: 1.4em; }
+  }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+
+<div class="header">
+  <h1 id="title">Plant Observations</h1>
+  <p>Recent sightings via iNaturalist · Munich</p>
+</div>
+
+<div id="photos"></div>
+<div id="error"></div>
+
+<div id="qrBlock">
+  <div class="qr-label">Scan to continue</div>
+  <div id="qrCode"></div>
+  <div class="qr-hint">Scan with your phone</div>
+</div>
+
+<script>
+const params     = new URLSearchParams(window.location.search);
+const taxonParam = params.get("taxon");
+
+if (!taxonParam) {
+  document.getElementById("error").textContent = "No taxon provided. Use ?taxon=Betula or ?taxon=Betula,Alnus";
+  throw new Error("Missing taxon parameter");
+}
+
+const requestedTaxa = taxonParam.split(",").map(t => t.trim()).filter(t => t.length > 0);
+
+if (requestedTaxa.length === 0) {
+  document.getElementById("error").textContent = "No valid taxon provided.";
+  throw new Error("Invalid taxon");
+}
+
+const MUNICH_PLACE_ID = 98421;
+const GERMANY_PLACE_ID = 6883;
+
+var commonNameMap = {
+  'Alnus': 'Alder', 'Corylus': 'Hazel', 'Betula': 'Birch', 'Fagus': 'Beech',
+  'Quercus': 'Oak', 'Fraxinus': 'Ash', 'Ulmus': 'Elm', 'Populus': 'Poplar',
+  'Salix': 'Willow', 'Acer': 'Maple', 'Tilia': 'Linden', 'Platanus': 'Plane Tree',
+  'Syringa': 'Lilac', 'Sambucus': 'Elder', 'Pinus': 'Pine', 'Abies': 'Fir',
+  'Picea': 'Spruce', 'Poaceae': 'Grasses', 'Secale': 'Rye', 'Triticum': 'Wheat',
+  'Hordeum': 'Barley', 'Avena': 'Oat', 'Zea': 'Corn', 'Brassica': 'Rapeseed',
+  'Artemisia': 'Mugwort', 'Ambrosia': 'Ragweed', 'Urtica': 'Nettle',
+  'Plantago': 'Plantain', 'Taraxacum': 'Dandelion', 'Chenopodium': 'Goosefoot',
+  'Humulus': 'Hop'
+};
+
+var displayNames = requestedTaxa.map(function(t) { return commonNameMap[t] || t; });
+document.getElementById("title").textContent =
+  "Latest " + displayNames.join(", ") + " observations in Munich";
+
+new QRCode(document.getElementById("qrCode"), {
+  text: "https://lehre.bpm.in.tum.de/~ge32puf/send.php?info=home&cb=" + encodeURIComponent(window.name),
+  width: 128,
+  height: 128,
+  colorDark: "#1a237e",
+  colorLight: "#ffffff",
+  correctLevel: QRCode.CorrectLevel.L
+});
+
+// Map common English pollen names to scientific genus/family names
+// to avoid ambiguous iNaturalist search results
+var scientificMap = {
+  'Alder': 'Alnus', 'Hazel': 'Corylus', 'Birch': 'Betula', 'Beech': 'Fagus',
+  'Oak': 'Quercus', 'Ash': 'Fraxinus', 'Elm': 'Ulmus', 'Poplar': 'Populus',
+  'Willow': 'Salix', 'Maple': 'Acer', 'Linden': 'Tilia', 'Plane Tree': 'Platanus',
+  'Lilac': 'Syringa', 'Elder': 'Sambucus', 'Pine': 'Pinus', 'Fir': 'Abies',
+  'Spruce': 'Picea', 'Grasses': 'Poaceae', 'Rye': 'Secale', 'Wheat': 'Triticum',
+  'Barley': 'Hordeum', 'Oat': 'Avena', 'Corn': 'Zea', 'Rapeseed': 'Brassica',
+  'Mugwort': 'Artemisia', 'Ragweed': 'Ambrosia', 'Nettle': 'Urtica',
+  'Plantain': 'Plantago', 'Dandelion': 'Taraxacum', 'Goosefoot': 'Chenopodium',
+  'Hop': 'Humulus'
+};
+
+function resolveTaxonId(name) {
+  var searchName = scientificMap[name] || name;
+  return fetch("https://api.inaturalist.org/v1/taxa?q=" + encodeURIComponent(searchName) + "&per_page=5&rank=genus,species,family")
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (!d.results || d.results.length === 0) return null;
+      // Prefer an exact name match to avoid wrong taxa
+      var exact = d.results.find(function(t) {
+        return t.name.toLowerCase() === searchName.toLowerCase();
+      });
+      return exact ? exact.id : d.results[0].id;
+    });
+}
+
+Promise.all(requestedTaxa.map(resolveTaxonId))
+  .then(function(ids) {
+    var validIds = ids.filter(function(id) { return id !== null; });
+    if (validIds.length === 0) {
+      document.getElementById("error").textContent = "Could not find any of the requested taxa on iNaturalist.";
+      return;
+    }
+
+    var maxPhotos = 10;
+
+    var photosDiv = document.getElementById("photos");
+
+    var idQuery    = validIds.map(function(id) { return "taxon_id=" + id; }).join("&");
+    var baseParams = "&photos=true&quality_grade=research&order_by=observed_on&order=desc&per_page=" + Math.min(maxPhotos + 8, 50);
+    var munichUrl  = "https://api.inaturalist.org/v1/observations?" + idQuery +
+      "&place_id=" + MUNICH_PLACE_ID + baseParams;
+    var germanyUrl = "https://api.inaturalist.org/v1/observations?" + idQuery +
+      "&place_id=" + GERMANY_PLACE_ID + baseParams;
+
+    return fetch(munichUrl)
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        var withPhotos = (data.results || []).filter(function(obs) {
+          return obs.photos && obs.photos.length > 0;
+        });
+
+        // Fall back to Germany-wide if Munich has fewer than 4 photos
+        if (withPhotos.length < 4) {
+          return fetch(germanyUrl)
+            .then(function(r) { return r.json(); })
+            .then(function(fallback) {
+              return (fallback.results || []).filter(function(obs) {
+                return obs.photos && obs.photos.length > 0;
+              });
+            });
+        }
+        return withPhotos;
+      })
+      .then(function(filtered) {
+        filtered = filtered.slice(0, maxPhotos);
+
+        if (filtered.length === 0) {
+          document.getElementById("error").textContent = "No observations found.";
+          return;
+        }
+
+        filtered.forEach(function(obs) {
+          var imgUrl = obs.photos[0].url.replace("square", "medium");
+          var card = document.createElement("div");
+          card.className = "photo-card";
+          card.innerHTML = '<img src="' + imgUrl + '" alt="Plant observation">';
+          photosDiv.appendChild(card);
+        });
+      });
+  })
+  .catch(function(err) {
+    console.error(err);
+    document.getElementById("error").textContent = "Failed to load data from iNaturalist.";
+  });
+</script>
+
+</body>
+</html>
