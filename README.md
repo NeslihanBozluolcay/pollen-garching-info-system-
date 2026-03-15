@@ -88,12 +88,12 @@ Benefits:
 
 ## External APIs Used
 
-| API | Used By | Authentication |
-|-----|---------|---------------|
-| [Donnerwetter.de](https://www.donnerwetter.de/pollenflug/garching/DE16830.html) | `pollen_proxy.php` | None (web scraping with GDPR cookies) |
-| [Trefle API](https://trefle.io) | `tree.php` | API token (stored in `tree.php`) |
-| [iNaturalist API](https://api.inaturalist.org/v1) | `observation.html` | None (public read access) |
-| [QRCode.js](https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js) | All display pages | None (CDN library) |
+| API | Used By | 
+|-----|---------|
+| [Donnerwetter.de](https://www.donnerwetter.de/pollenflug/garching/DE16830.html) | `pollen_proxy.php` | 
+| [Trefle API](https://trefle.io) | `tree.php` | 
+| [iNaturalist API](https://api.inaturalist.org/v1) | `observation.html` | 
+| [QRCode.js](https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js) | All display pages | 
 
 ---
 
