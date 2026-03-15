@@ -80,7 +80,7 @@ https://.../send.php?info=<value>&cb=<CPEE_callback_URL>
 
 ### PHP Backend Scripts
 
-**`pollen_proxy.php`** — Web scraper for Donnerwetter.de. Fetches the Garching pollen forecast page using `file_get_contents` with GDPR consent cookies. Parses the raw HTML by splitting on `pollg*.gif` image markers and extracting pollen names from `<b>` tags and levels from `poll[0-4].gif` filenames. Translates German names to English using a built-in dictionary. Returns active pollen (level > 0) as JSON with name, category (Tree/Grass/Weed), and level (1–4). Required because Donnerwetter.de cannot be fetched directly from the browser due to CORS restrictions.
+**`pollen_proxy.php`** — Fetches the pollen forecast from Donnerwetter.de and returns the data as JSON. It reads the HTML of the page, finds the pollen names and their levels, and translates them from German to English. Only pollen with a level above 0 is included. This runs on the server because browsers cannot contact Donnerwetter.de directly due to CORS restrictions.
 
 **`tree.php`** — Server-side proxy for the Trefle plant database API. Takes a `?species=<name>` query parameter, forwards it to `trefle.io/api/v1/species/search`, and returns the JSON response to the browser. Required because the Trefle API token must be kept server-side and cannot be exposed in client-side JavaScript.
 
