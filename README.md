@@ -4,25 +4,8 @@ A CPEE-driven web application that displays real-time pollen levels in Garching,
 
 ---
 
-## What is CPEE?
-
-CPEE (Cloud Process Execution Engine) is a workflow engine developed at TU Munich. It orchestrates multi-step processes by executing tasks in a defined order, similar to a flowchart that runs on a server.
-
-In this project, CPEE acts as the **controller** that decides which web page to show next on the display screen. Each page is a CPEE task — when the user scans a QR code, the page sends a result back to CPEE via `send.php`, and CPEE moves to the next step in the process (e.g. navigate to `trees.html`).
-
-Key concepts used in this project:
-
-- **Callback URL** (`window.name`): When CPEE opens a page, it passes a unique callback URL as the browser window name. The page embeds this URL inside each QR code.
-- **PUT callback**: When a QR code is scanned, `send.php` does an HTTP PUT to that callback URL with the scanned value as the body. This signals to CPEE that the task is done and what the user chose.
-- **Process model**: CPEE holds the logic of what happens next — which page to open, what data to pass, and how to branch based on the scanned value (e.g. "home" vs. "photos" vs. a pollen name).
-
-This means the HTML pages themselves contain no navigation logic — they just display data and report back what was scanned. All routing decisions live in the CPEE process.
-
----
 
 ## System Overview
-
-The system is built around four active display pages, two PHP backend scripts, and a CPEE callback relay. The pages are served from a university web server and orchestrated by the Cloud Process Execution Engine (CPEE).
 
 ### CPEE Workflow
 
