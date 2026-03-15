@@ -57,16 +57,17 @@ https://.../send.php?info=<value>&cb=<CPEE_callback_URL>
 | File | URL Parameter | Purpose |
 |------|--------------|---------|
 | `pollen.html` | — |This is the main dashboard. It fetches live pollen data via `pollen_proxy.php`, which web-scrapes Donnerwetter.de in real time. Then, it displays a card per pollen type (level > 0) with its QR code. Adapts to 1 or 2 columns depending on item count. |
-| `trees.html` | `?species=<name>` | It's a species detail page. It receives a pollen/tree name (based on the scanned qr code in pollen.html), queries the Trefle API via `tree.php`, and displays an information page. Always shows two QR codes: Go Home and See More Photos. |
+| `trees.html` | `?species=<name>` | This is the species detail page. It receives a pollen/tree name (based on the scanned qr code in pollen.html), queries the Trefle API via `tree.php`, and displays an information page. Always shows two QR codes: Go Home and See More Photos. |
 | `observation.html` | `?taxon=<scientific_name>` | This is the photo gallery page. It takes a scientific genus name (e.g. `Salix`), fetches the 10 most recent research-grade observations from iNaturalist filtered to Munich (falls back to Germany if fewer than 4 Munich results), and displays them in a 5×2 photo grid. |
 
 ### PHP Backend Scripts
+| File | Purpose |
+|------|--------------|
+| **`pollen_proxy.php`** | — |Fetches the pollen forecast from Donnerwetter.de and returns the data as JSON. It reads the HTML of the page, finds the pollen names and their levels, and translates them from German to English. Only pollen with a level above 0 is included. This runs on the server because browsers cannot contact Donnerwetter.de directly due to CORS restrictions.|
 
-**`pollen_proxy.php`** — Fetches the pollen forecast from Donnerwetter.de and returns the data as JSON. It reads the HTML of the page, finds the pollen names and their levels, and translates them from German to English. Only pollen with a level above 0 is included. This runs on the server because browsers cannot contact Donnerwetter.de directly due to CORS restrictions.
+| **`tree.php`** | — | Server-side proxy for the Trefle plant database API. Takes a `?species=<name>` query parameter, forwards it to trefle.io/api, and returns the JSON response to the browser. This php backend is required because the Trefle API token must be kept server-side and cannot be exposed in client-side JavaScript.|
 
-**`tree.php`** — Server-side proxy for the Trefle plant database API. Takes a `?species=<name>` query parameter, forwards it to trefle.io/api, and returns the JSON response to the browser. This php backend is required because the Trefle API token must be kept server-side and cannot be exposed in client-side JavaScript.
-
-**`send.php`** — CPEE callback relay. Takes `?info=<value>&cb=<url>` and does a PUT request to the CPEE callback URL with `info` as the plain-text body. This is how QR code scans communicate back to the CPEE engine.
+| **`send.php`** | — | CPEE callback relay. Takes `?info=<value>&cb=<url>` and does a PUT request to the CPEE callback URL with `info` as the plain-text body. This is how QR code scans communicate back to the CPEE engine.|
 
 ---
 
