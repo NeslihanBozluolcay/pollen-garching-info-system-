@@ -7,6 +7,8 @@ This a a CPEE-driven web application that displays real-time pollen levels in Ga
 
 ## System Overview
 
+**CPEE Process Model:** [JoyPrak_Neslihan_main_branch.xml](JoyPrak_Neslihan_main_branch.xml)
+
 ### Prepare and Finalize
 
 Each CPEE node has two data-handling sections:
