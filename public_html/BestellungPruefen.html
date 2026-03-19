@@ -1,0 +1,33 @@
+
+<worklist-form-load>
+  $('p.bestellungID span',form).text(data.bestellungID);
+</worklist-form-load>
+
+
+<p class="bestellungID ">
+  orderID: <span></span>
+</p>
+
+<p>
+  The following things are controlled:
+</p>
+
+<table style="padding: 0; margin: 0;">
+  <tr>
+    <td>
+     <input type="checkbox" name="status_amountPaid" id="checkbox-amountPaid" value="amountPaid"  form="worklist-form" /> The total amount of the order paid.
+     <input type="checkbox" name="status_bestellungWahr" id="checkbox-bestellungWahr" value="bestellungWahr" form="worklist-form" /> The order is valid.
+     <input type="checkbox" name="status_addresseKorrekt" id="checkbox-addresseKorrekt" value="addresseKorrekt"  form="worklist-form" /> The address of the customer is valid.
+    </td>
+  </tr>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <input type="submit" value="Submit" form="worklist-form">
+    </td>
+  </tr>
+</table>

@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Pollen QR</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<style>
+body {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #ffffff;
+  font-family: sans-serif;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 1em;
+  width: 80%;
+  justify-content: center;
+  min-height: 200px;  /* increase row height */
+}
+
+.col-image {
+  flex: 0 0 auto;
+  width: 80px;        /* bigger image */
+  height: 80px;
+}
+
+.col-qr {
+  flex: 0 0 auto;
+  width: 150px;       /* bigger QR container */
+  height: 150px;
+}
+
+.col-pollen {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  font-size: 2em;
+  font-weight: bold;
+  text-transform: uppercase;
+  gap: 0.5em;
+}
+
+.col-value, .col-level {
+  flex: 1;
+  font-size: 2em;
+  text-align: center;
+}
+
+
+:root {
+  --level-low: #2ecc71;
+  --level-medium: #f1c40f;
+  --level-dangerous: #e67e22;
+  --level-critical: #e74c3c;
+  --level-unknown: #7f8c8d;
+}
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+
+  // --- get pollen type from URL param ---
+  const urlParams = new URLSearchParams(window.location.search);
+  const pollenTypeParam = urlParams.get("info");
+  const pollenType = pollenTypeParam ? pollenTypeParam.toUpperCase() : "UNKNOWN";
+
+  // --- supported pollens ---
+  const supported = ["ALDER","BIRCH","GRASS"];
+  if (!supported.includes(pollenType)) {
+    alert("Only ALDER, BIRCH, GRASS supported");
+    return;
+  }
+
+  // --- images ---
+  const pollenImages = {
+    ALDER: "alder.png",
+    BIRCH: "birch.png",
+    GRASS: "grass.png"
+  };
+
+  const thresholds = {
+    ALDER: [20,50,100],
+    BIRCH: [10,50,100],
+    GRASS: [4,20,200]
+  };
+
+  const colorMap = {
+    LOW: "var(--level-low)",
+    MEDIUM: "var(--level-medium)",
+    DANGEROUS: "var(--level-dangerous)",
+    CRITICAL: "var(--level-critical)",
+    UNKNOWN: "var(--level-unknown)"
+  };
+
+  function computeLevel(type,val){
+    if (!thresholds[type] || isNaN(val)) return "UNKNOWN";
+    const t = thresholds[type];
+    if(val <= t[0]) return "LOW";
+    if(val <= t[1]) return "MEDIUM";
+    if(val <= t[2]) return "DANGEROUS";
+    return "CRITICAL";
+  }
+
+  // --- compute yesterday and today in yyyy-mm-dd format ---
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+
+  function formatDate(d){
+    return d.toISOString().slice(0,10);
+  }
+
+  const start_date = formatDate(yesterday);
+  const end_date = formatDate(today);
+
+  // --- API fetch ---
+  const apiUrl = `https://air-quality-api.open-meteo.com/v1/air-quality?latitude=48.249&longitude=11.651&hourly=alder_pollen,birch_pollen,grass_pollen&start_date=${start_date}&end_date=${end_date}`;
+
+  fetch(apiUrl)
+    .then(res => res.json())
+    .then(data => {
+      const hourly = data.hourly;
+      const lastIndex = hourly.time.length -1;
+
+      const apiKeyMap = {
+        ALDER: "alder_pollen",
+        BIRCH: "birch_pollen",
+        GRASS: "grass_pollen"
+      };
+
+      const apiKey = apiKeyMap[pollenType];
+      const value = hourly[apiKey][lastIndex];
+
+      const level = computeLevel(pollenType,value);
+
+      // --- update HTML ---
+      document.getElementById("pollenImage").src = pollenImages[pollenType];
+      document.getElementById("pollenImage").alt = pollenType;
+      document.getElementById("pollenNameText").textContent = pollenType;
+      document.getElementById("pollenValue").textContent = value + " grains/m³";
+      const levelSpan = document.getElementById("pollenLevel");
+      levelSpan.textContent = level;
+      levelSpan.style.color = colorMap[level];
+
+      // --- QR code ---
+      new QRCode(document.getElementById("test"), {
+        text: `https://lehre.bpm.in.tum.de/~ge32puf/send.php?info=${pollenType}&cb=${window.name}`,
+        width: 128,
+        height: 128,
+        colorDark: "#000000",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.L
+      });
+    })
+    .catch(err => console.error("API fetch error:", err));
+
+});
+</script>
+
+</head>
+
+<body>
+<div class="row">
+  <span class="col-pollen">
+    <img id="pollenImage" class="col-image" src="" alt="pollen">
+    <span id="pollenNameText"></span>
+  </span>
+  <span id="pollenValue" class="col-value"></span>
+  <span id="pollenLevel" class="col-level"></span>
+  <div id="test" class="col-qr"></div>
+</div>
+</body>
+</html>
+

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Tree Details</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 2em;
+    background-color: #f9f9f9;
+}
+.container {
+    max-width: 600px;
+    margin: auto;
+    padding: 1em;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+.tree-image {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin-bottom: 1em;
+}
+.tree-name {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-bottom: 0.5em;
+}
+.tree-info p {
+    margin: 0.3em 0;
+}
+.error {
+    color: red;
+    font-weight: bold;
+}
+.qr-container {
+    margin-top: 2em;
+    text-align: center;
+}
+.qr-label {
+    margin-bottom: 0.5em;
+    font-weight: bold;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <img id="treeImage" class="tree-image" src="" alt="Tree Image">
+    <div id="treeName" class="tree-name"></div>
+    <div id="treeInfo" class="tree-info"></div>
+    <div id="error" class="error"></div>
+
+    <!-- QR Code Section -->
+    <div class="qr-container">
+        <div class="qr-label">Back to Main Page</div>
+        <div id="qrCode"></div>
+    </div>
+</div>
+
+<!-- QRCode.js library (use CDN) -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<script>
+// --- Get species from query string ---
+function getQueryParam(param) {
+    const urlParams = new URLSearchParams(window.location.search);
+    return urlParams.get(param);
+}
+
+const speciesName = getQueryParam("species");
+if (!speciesName) {
+    document.getElementById("error").textContent = "No species specified in URL.";
+} else {
+    fetch(`tree.php?species=${encodeURIComponent(speciesName)}`)
+        .then(res => res.json())
+        .then(data => {
+            if (!data || !data.data || data.data.length === 0) {
+                document.getElementById("error").textContent = "No information found for this species.";
+                return;
+            }
+
+            const tree = data.data[0]; // take first result
+            document.getElementById("treeImage").src = tree.image_url || "";
+            document.getElementById("treeName").textContent = tree.common_name || tree.scientific_name || speciesName;
+
+            const infoDiv = document.getElementById("treeInfo");
+            infoDiv.innerHTML = `
+                <p><strong>Scientific Name:</strong> ${tree.scientific_name || "N/A"}</p>
+                <p><strong>Family:</strong> ${tree.family_common_name || "N/A"}</p>
+                <p><strong>Genus:</strong> ${tree.genus || "N/A"}</p>
+                <p><strong>Author:</strong> ${tree.author || "N/A"}</p>
+                <p><strong>Year:</strong> ${tree.year || "N/A"}</p>
+                <p><strong>Status:</strong> ${tree.status || "N/A"}</p>
+                <p><strong>Bibliography:</strong> ${tree.bibliography || "N/A"}</p>
+            `;
+        })
+        .catch(err => {
+            console.error(err);
+            document.getElementById("error").textContent = "Failed to fetch tree data.";
+        });
+}
+// --- First QR code ---
+new QRCode(document.getElementById("qrCode1"), {
+    text: `https://lehre.bpm.in.tum.de/~ge32puf/send.php?info=${speciesName}&cb=${window.name}`,
+    width: 128,
+    height: 128,
+    colorDark: "#000000",
+    colorLight: "#ffffff",
+    correctLevel: QRCode.CorrectLevel.L
+});
+
+// --- Second QR code (could point somewhere else or same URL) ---
+new QRCode(document.getElementById("qrCode2"), {
+    text: `https://lehre.bpm.in.tum.de/~ge32puf/send.php?info=${speciesName}&cb=${window.name}&second=1`,
+    width: 128,
+    height: 128,
+    colorDark: "#000000",
+    colorLight: "#ffffff",
+    correctLevel: QRCode.CorrectLevel.L
+});
+
+</script>
+
+</body>
+</html>
+
+

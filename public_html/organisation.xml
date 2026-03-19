@@ -1,0 +1,65 @@
+<organisation xmlns="http://cpee.org/ns/organisation/1.0">
+<units>
+<unit id="Kunde">
+<permissions/>
+</unit>
+<unit id="Fahrradhandler">
+<permissions/>
+</unit>
+<unit id="Logistik Department">
+<parent>Fahrradhandler</parent>
+<permissions/>
+</unit>
+</units>
+<roles>
+<role id="Regular">
+<permissions/>
+</role>
+<role id="Arbeiter">
+<permissions/>
+</role>
+<role id="Pruefer">
+<parent>Arbeiter</parent>
+<permissions/>
+</role>
+<role id="KundenService">
+<parent>Arbeiter</parent>
+<permissions/>
+</role>
+<role id="LogistikArbeiter">
+<permissions/>
+</role>
+<role id="RechnungErsteller">
+<parent>LogistikArbeiter</parent>
+<permissions/>
+</role>
+<role id="Verpacker">
+<parent>LogistikArbeiter</parent>
+<permissions/>
+</role>
+</roles>
+<subjects>
+<subject id="Lukas Müller" uid="03752598_luk">
+<relation unit="Kunde" role="Regular"/>
+</subject>
+<subject id="Hannah Schneider" uid="03752598_han">
+<relation unit="Kunde" role="Regular"/>
+</subject>
+<subject id="Finn Wagner" uid="03752598_fin">
+<relation unit="Fahrradhandler" role="Arbeiter"/>
+<relation unit="Fahrradhandler" role="Pruefer"/>
+</subject>
+<subject id="Lea Becker" uid="03752598_lea">
+<relation unit="Fahrradhandler" role="Arbeiter"/>
+<relation unit="Fahrradhandler" role="KundenService"/>
+</subject>
+<subject id="Jonas Hofmann" uid="03752598_jon">
+<relation unit="Logistik Department" role="LogistikArbeiter"/>
+<relation unit="Logistik Department" role="RechnungErsteller"/>
+</subject>
+<subject id="Emma Braun" uid="03752598_emm">
+<relation unit="Logistik Department" role="LogistikArbeiter"/>
+<relation unit="Logistik Department" role="Verpacker"/>
+</subject>
+</subjects>
+</organisation>

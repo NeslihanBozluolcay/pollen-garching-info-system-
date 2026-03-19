@@ -1,0 +1,57 @@
+<worklist-form-load>
+  $('p.bestellungID span',form).text(data.bestellungID);
+</worklist-form-load>
+
+<p class="bestellungID">
+  Your order number is: <span></span> <br>
+  In the following, you can see all of our bicycles that you can order: 
+  <ul>
+        <li>schwarzFahrrad</li>
+        <li>grunFahrrad</li>
+        <li>gelbFahrrad</li>
+        <li>blauFahrrad</li>
+         <li>lilaFahrrad</li>
+        <li>weissFahrrad</li>
+    </ul>
+
+</p>
+
+<script>
+  function addStuff(where) {
+    $(where).before($('<tr><td>I want to add this to my order: <input type="text" width="200" name="additionalDescription" id="additionalDescription" form="worklist-form"/></td></tr>'));
+  }
+</script>
+
+<table style="padding: 0; margin: 0;">
+  <tr>
+    <td>
+      Please write your name: <input type="text" width="200" name="kundenName" id="kundenName" form="worklist-form"/>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      Please write your address: <input type="text" width="200" name="kundenAddresse" id="kundenAddresse" form="worklist-form"/>
+    </td>
+  </tr>
+
+ <tr class="addBeforeHere">
+    <td>
+      &nbsp;
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <button onclick="addStuff('worklist-item .addBeforeHere');">I want to add some stuff into my order</button>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <input type="submit" value="Submit" form="worklist-form">
+    </td>
+  </tr>
+</table>

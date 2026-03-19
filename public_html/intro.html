@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<title>Pollen Alert – Garching</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    height: 100%;
+    overflow: hidden;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: #f9f9f7;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 24px;
+    gap: 28px;
+  }
+
+  /* ── Safe state ── */
+  .safe-icon {
+    font-size: 5em;
+  }
+
+  .safe-message {
+    font-size: 1.6em;
+    font-weight: 700;
+    color: #2e7d32;
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  /* ── Warning state ── */
+  .warning-icon {
+    font-size: 5em;
+  }
+
+  .warning-intro {
+    font-size: 1.5em;
+    font-weight: 700;
+    color: #b71c1c;
+    text-align: center;
+    line-height: 1.4;
+  }
+
+  .warning-advice {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: #e65100;
+    text-align: center;
+  }
+
+  /* ── Tree list ── */
+  .tree-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    max-width: 700px;
+  }
+
+  .tree-tag {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 20px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 1.1em;
+    color: #fff;
+  }
+
+  .tree-tag.lvl-3 { background: #ef6c00; }
+  .tree-tag.lvl-4 { background: #c62828; }
+</style>
+</head>
+<body>
+
+<div id="content">
+  <p style="color:#999">Loading pollen data...</p>
+</div>
+
+<script>
+var emojiMap = {
+  'Alder':      '🌿', 'Hazel':      '🌰', 'Birch':   '🌲', 'Beech':     '🍂',
+  'Oak':        '🍂', 'Ash':        '🌳', 'Elm':     '🌳', 'Poplar':    '🌳',
+  'Willow':     '🌿', 'Maple':      '🍁', 'Linden':  '🌸', 'Plane Tree':'🌳',
+  'Lilac':      '🌸', 'Elder':      '🌼', 'Pine':    '🌲', 'Fir':       '🌲',
+  'Spruce':     '🌲', 'Grasses':    '🌾', 'Rye':     '🌾', 'Wheat':     '🌾',
+  'Barley':     '🌾', 'Oat':        '🌾', 'Corn':    '🌽', 'Rapeseed':  '🌼',
+  'Mugwort':    '🌿', 'Ragweed':    '🌿', 'Nettle':  '🌿', 'Plantain':  '🌿',
+  'Dandelion':  '🌼', 'Goosefoot':  '🌿', 'Hop':     '🍺'
+};
+
+fetch('pollen_proxy.php')
+  .then(function(r) { return r.json(); })
+  .then(function(data) {
+    var content = document.getElementById('content');
+    content.innerHTML = '';
+
+    if (data.error) {
+      content.innerHTML = '<p style="color:red">Error: ' + data.error + '</p>';
+      return;
+    }
+
+    var high = (data.pollen || []).filter(function(p) { return p.level > 2; });
+
+    if (high.length === 0) {
+      content.innerHTML =
+        '<div class="safe-icon">✅</div>' +
+        '<p class="safe-message">Today there are no pollens<br>at extreme levels in Garching.</p>';
+      return;
+    }
+
+    var names = high.map(function(p) { return p.name; }).join(', ');
+
+    var tagsHtml = high.map(function(p) {
+      var emoji = emojiMap[p.name] || '🌱';
+      return '<div class="tree-tag lvl-' + p.level + '">' + emoji + ' ' + p.name + '</div>';
+    }).join('');
+
+    content.innerHTML =
+      '<div class="warning-icon">⚠️</div>' +
+      '<p class="warning-intro">Today ' + names + '<br>have high pollen levels.</p>' +
+      '<div class="tree-list">' + tagsHtml + '</div>' +
+      '<p class="warning-advice">Be careful if you have allergies!</p>';
+  })
+  .catch(function(err) {
+    document.getElementById('content').innerHTML = '<p style="color:red">Error: ' + err + '</p>';
+  });
+</script>
+</body>
+</html>

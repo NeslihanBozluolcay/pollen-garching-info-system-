@@ -1,0 +1,46 @@
+<worklist-form-load>
+  $('p.kundenName span',form).text(data.kundenName);
+</worklist-form-load>
+
+<worklist-form-load>
+  $('p.bestellungID span',form).text(data.bestellungID);
+</worklist-form-load>
+
+<worklist-form-load>
+  $('p.gewahlteProdukt span',form).text(data.gewahlteProdukt);
+</worklist-form-load>
+
+<worklist-form-load>
+  $('#description1',form).val(data.description1);
+</worklist-form-load>
+
+<p class="kundenName">
+  Dear <span></span>,
+</p>
+<p class="gewahlteProdukt">
+  The produkt <span></span> 
+</p>
+
+<p class="bestellungID">
+  from your order with the orderID <span></span>.
+</p>
+
+<table style="padding: 0; margin: 0;">
+  <tr>
+    <td>
+      got canceled because of the following reason:<br>
+<textarea style="height: 100px; width: 350px;" name="description1" id="description1" form="worklist-form"></textarea> 
+  <br>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      &nbsp;
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <input type="submit" value="Submit" form="worklist-form">
+    </td>
+  </tr>
+</table>
