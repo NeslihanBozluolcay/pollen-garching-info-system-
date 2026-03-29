@@ -1,9 +1,0 @@
-{
-  "permissions": {
-    "allow": [
-      "WebFetch(domain:www.donnerwetter.de)",
-      "WebFetch(domain:www.wetter.de)",
-      "WebFetch(domain:lehre.bpm.in.tum.de)"
-    ]
-  }
-}
