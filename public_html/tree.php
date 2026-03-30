@@ -1,10 +1,8 @@
 <?php
 header('Content-Type: application/json');
 
-// --- Replace with your Trefle API token ---
 $TOKEN = "usr-IwGPkX2IxDri-ogxJr6BpxIyj9P-_dyV4gce1lx7_-w";
 
-// Get species from query parameter
 if (!isset($_GET['species'])) {
     echo json_encode(['error' => 'No species provided']);
     exit;
