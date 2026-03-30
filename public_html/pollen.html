@@ -49,7 +49,7 @@
     color: #777;
   }
 
-  /* ── Cards container — fills all remaining vertical space ── */
+
   #cards {
     flex: 1;
     min-height: 0;           /* critical: allows flex child to shrink below content size */
@@ -59,7 +59,7 @@
     gap: 8px;
   }
 
-  /* ── Each card stretches equally ── */
+
   .card {
     flex: 1;
     min-height: 0;
@@ -73,13 +73,13 @@
     overflow: hidden;
   }
 
-  /* Card background by level */
+  
   .card-bg-1 { background: #f1f8e9; }  /* Low      – light green  */
   .card-bg-2 { background: #fffde7; }  /* Moderate – light yellow */
   .card-bg-3 { background: #fff3e0; }  /* High     – light orange */
   .card-bg-4 { background: #ffebee; }  /* Extreme  – light red    */
 
-  /* Category badge */
+ 
   .badge {
     font-size: 0.65em;
     font-weight: 600;
@@ -92,7 +92,7 @@
     flex-shrink: 0;
   }
 
-  /* Pollen name */
+  
   .pollen-name {
     flex: 1;
     font-size: 1.4em;
@@ -104,7 +104,7 @@
     min-width: 0;
   }
 
-  /* Level pill */
+  
   .level-pill {
     font-size: 0.9em;
     font-weight: 700;
@@ -121,7 +121,7 @@
   .lvl-3 { background: #ef6c00; }
   .lvl-4 { background: #c62828; }
 
-  /* QR wrapper */
+ 
   .qr-wrap {
     display: flex;
     flex-direction: column;
@@ -204,7 +204,6 @@ fetch('pollen_proxy.php')
       cardsEl.style.gridAutoRows = '1fr';
     }
 
-    // Calculate available height per row to scale QR and text
     var headerH = document.querySelector('.header').offsetHeight;
     var bodyPad = 32; // 16px top + 16px bottom
     var gapTotal = 8 * (rows - 1);
