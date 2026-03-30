@@ -34,11 +34,11 @@ Each CPEE node has two data-handling sections:
 
 ![Show QR node](Screenshots/3.png)
 
-**a6 – Set Timeout to Current Time:** The step data.timeout = Time.now.to_i stores the current timestamp (in seconds) and effectively resets a timer at that point in the process. Instead of acting as a boolean timeout flag, this variable represents the last interaction time. Later, conditions like Time.now.to_i - data.timeout < 120 are used to calculate how much time has passed since that moment and determine whether the process should continue. In other words, this mechanism measures elapsed time between steps and ensures that the process only proceeds if the last interaction occurred within a defined time window (e.g., 120 seconds). However, it does not actively interrupt or stop a running task; it only enables time-based checks when the process reaches a decision point.
+**a6 – Set Timeout to Current Time:** The step 'data.timeout = Time.now.to_i' stores the current timestamp (in seconds) and resets a timer at that point in the process. Later, the condition 'Time.now.to_i - data.timeout < 120' is used to calculate how much time has passed since that moment and determine whether the process should continue.
 
 ![Show individual page node](Screenshots/4.png)
 
-**a5 – Show individual page:** Opens `trees.html` passing `data.wereceived` as the `species` URL parameter, so the page knows which tree to look up. When the user scans a QR ("Go Home" or "See More Photos"), Finalize stores the result into `data.isHome`. The condition `data.isHome != "home" && !data.timeout` then determines whether to proceed to observations or loop back.
+**a5 – Show individual page:** Opens `trees.html` passing `data.wereceived` as the `species` URL parameter, so the page knows which tree to look up. When the user scans a QR ("Go Home" or "See More Photos"), Finalize stores the result into `data.isHome`. The condition `data.isHome != "home"` then determines whether to proceed to observations or loop back.
 
 ![Show individual page node](Screenshots/5.png)
 
