@@ -24,7 +24,7 @@ Each CPEE node has two data-handling sections:
 
 **a1 – Init Frame:** Initialises the browser frame. Prepare registers the frame endpoint (`endpoints.frames_init += attributes.framesid`) so later nodes know where to display content.
 
-![Init Frame node](Screenshots/Screenshot%202026-03-15%20at%2020.45.14.png)
+![Init Frame node](Screenshots/1.png)
 
 **a2 – Clear:** Clears the current display. Finalize sets `data.timeout = false` to reset the timeout flag at the start of each loop.
 
