@@ -1,5 +1,4 @@
 <?php
-// v9 - working parser
 set_time_limit(30);
 error_reporting(0);
 header('Content-Type: application/json');
@@ -27,19 +26,13 @@ if ($html === false) {
     exit;
 }
 
-// Structure per entry (discovered from real HTML):
-//   <img src="...pollg[bgk].gif" ...>
-//   ... <b><font size="2">NAME</font></b> ...
-//   ... <img src="...poll[0-4].gif" ... alt="LEVEL"> ...
-//
-// Strategy: split HTML by pollg[bgk].gif markers, parse each chunk.
 
 $parts = preg_split('/(pollg[bgk]\.gif)/i', $html, -1, PREG_SPLIT_DELIM_CAPTURE);
 
 $catNames  = array('b' => 'Tree', 'g' => 'Grass', 'k' => 'Weed');
 $lvlLabels = array('0' => 'None', '1' => 'Low', '2' => 'Moderate', '3' => 'High', '4' => 'Very High');
 
-// German → English pollen name translations
+
 $nameTranslations = array(
     'Erle'          => 'Alder',
     'Hasel'         => 'Hazel',
@@ -84,13 +77,12 @@ for ($i = 1; $i < count($parts) - 1; $i += 2) {
     $catGif = $parts[$i];   // "pollgb.gif", "pollgg.gif", or "pollgk.gif"
     $chunk  = $parts[$i+1]; // HTML until the next pollg*.gif
 
-    // Category
+  
     preg_match('/pollg([bgk])\.gif/i', $catGif, $cm);
     if (!isset($cm[1])) continue;
     $cat = strtolower($cm[1]);
 
-    // Pollen name: inside <b> and <font> tags
-    // Pattern: <b><font size="2">NAME</font></b>  or  <b>NAME</b>
+    
     if (!preg_match('/<b>[^<]*(?:<font[^>]*>)?([^<]+)/i', $chunk, $nm)) continue;
     $name = trim($nm[1]);
     if (strlen($name) < 2) continue;
@@ -110,7 +102,7 @@ for ($i = 1; $i < count($parts) - 1; $i += 2) {
     );
 }
 
-// Filter to only active pollen (level > 0)
+
 $active = array();
 foreach ($pollen as $p) {
     if ($p['level'] > 0) {
