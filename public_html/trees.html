@@ -19,7 +19,6 @@
     padding: 32px 20px 48px;
   }
 
-  /* ── Error ── */
   #error {
     color: #c62828;
     font-weight: 600;
@@ -187,7 +186,6 @@ if (!speciesName) {
         });
 }
 
-// QR codes always render regardless of tree data
 new QRCode(document.getElementById("qrCode1"), {
     text: `https://lehre.bpm.in.tum.de/~ge32puf/send.php?info=home&cb=${encodeURIComponent(window.name)}`,
     width: 120,
