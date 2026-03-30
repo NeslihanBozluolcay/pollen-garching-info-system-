@@ -28,11 +28,11 @@ Each CPEE node has two data-handling sections:
 
 **a2 – Clear:** Clears the current display. Finalize sets `data.timeout = false` to reset the timeout flag at the start of each loop.
 
-![Clear node](Screenshots/Screenshot%202026-03-15%20at%2020.45.22.png)
+![Clear node](Screenshots/2.png)
 
 **a4 – Show QR:** Opens `pollen.html` and waits for the user to scan a QR code. When scanned, `send.php` sends the scientific name (e.g. `Salix`) back to CPEE. Finalize captures it as `result` and stores it in `data.wereceived`, which is then passed to the next nodes.
 
-![Show QR node](Screenshots/Screenshot%202026-03-15%20at%2020.45.34.png)
+![Show QR node](Screenshots/3.png)
 
 **a5 – Show individual page:** Opens `trees.html` passing `data.wereceived` as the `species` URL parameter, so the page knows which tree to look up. When the user scans a QR ("Go Home" or "See More Photos"), Finalize stores the result into `data.isHome`. The condition `data.isHome != "home" && !data.timeout` then determines whether to proceed to observations or loop back.
 
