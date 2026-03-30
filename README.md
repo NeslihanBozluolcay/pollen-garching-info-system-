@@ -26,7 +26,7 @@ Each CPEE node has two data-handling sections:
 
 ![Init Frame node](Screenshots/1.png)
 
-**a2 – Clear:** Clears the current display. Finalize sets `data.timeout = false` to reset the timeout flag at the start of each loop.
+**a2 – Clear:** Clears the current display.
 
 ![Clear node](Screenshots/2.png)
 
@@ -46,9 +46,8 @@ Each CPEE node has two data-handling sections:
 
 ![Show observations node](Screenshots/6.png)
 
-**a3 – Wait 60 seconds:** Timeout node running in parallel with the user task nodes. If 60 seconds pass with no QR scan, Finalize sets `data.timeout = true` and the workflow loops back to the beginning.
-
-![Wait 60 seconds node](Screenshots/7.png)
+**a3 – Wait 120 seconds:** Timeout node running in parallel with the user task nodes. If 120 seconds pass with no QR scan, the process finishes automatically.
+![Wait 120 seconds node](Screenshots/7.png)
 
 ---
 
