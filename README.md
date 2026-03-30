@@ -34,7 +34,7 @@ Each CPEE node has two data-handling sections:
 
 ![Show QR node](Screenshots/3.png)
 
-**a6 – Set Timeout to Current Time:** The step 'data.timeout = Time.now.to_i' stores the current timestamp (in seconds) and resets a timer at that point in the process. Later, the condition 'Time.now.to_i - data.timeout < 120' is used to calculate how much time has passed since that moment and determine whether the process should continue.
+**a6 – Set Timeout to Current Time:** The step `data.timeout = Time.now.to_i` stores the current timestamp (in seconds) and resets a timer at that point in the process. Later, the condition `Time.now.to_i - data.timeout < 120` is used to calculate how much time has passed since that moment and determine whether the process should continue.
 
 ![Show individual page node](Screenshots/4.png)
 
