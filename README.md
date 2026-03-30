@@ -36,15 +36,15 @@ Each CPEE node has two data-handling sections:
 
 **a5 – Show individual page:** Opens `trees.html` passing `data.wereceived` as the `species` URL parameter, so the page knows which tree to look up. When the user scans a QR ("Go Home" or "See More Photos"), Finalize stores the result into `data.isHome`. The condition `data.isHome != "home" && !data.timeout` then determines whether to proceed to observations or loop back.
 
-![Show individual page node](Screenshots/Screenshot%202026-03-15%20at%2020.45.43.png)
+![Show individual page node](Screenshots/5.png)
 
 **a9 – Show observations:** Opens `observation.html` passing `data.wereceived` as the `taxon` URL parameter, so the page fetches photos of the same plant the user selected in a4.
 
-![Show observations node](Screenshots/Screenshot%202026-03-15%20at%2020.45.53.png)
+![Show observations node](Screenshots/6.png)
 
 **a3 – Wait 60 seconds:** Timeout node running in parallel with the user task nodes. If 60 seconds pass with no QR scan, Finalize sets `data.timeout = true` and the workflow loops back to the beginning.
 
-![Wait 60 seconds node](Screenshots/Screenshot%202026-03-15%20at%2020.46.00.png)
+![Wait 60 seconds node](Screenshots/7.png)
 
 ---
 
